@@ -1,1 +1,1 @@
-# Part 1 - Exercise CourseInfo
+# Following the Full Stack Open Course
