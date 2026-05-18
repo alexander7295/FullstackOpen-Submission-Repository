@@ -22,7 +22,7 @@ sequenceDiagram
     Server-->>Browser: spa.js
     deactivate Server
 
-    Browser-->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+    Browser->>Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate Server
     Server-->>Browser: data.json
     deactivate Server
