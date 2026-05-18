@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant User
     participant Browser
@@ -33,3 +34,4 @@ sequenceDiagram
 
     Browser-->>User: Updated Page
     deactivate Browser
+```
