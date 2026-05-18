@@ -1,1 +1,1 @@
-# Part 1 - Exercise CourseInfo
+# Course Information Submission
