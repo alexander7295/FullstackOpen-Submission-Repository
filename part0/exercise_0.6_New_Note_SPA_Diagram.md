@@ -16,8 +16,6 @@ sequenceDiagram
     Note right of Browser: Instead, the event handler creates the new note, adds it to the notes list, then rerenders the list
     Note right of Browser: The event handler also sends the new note to the server
 
-    
-
     Browser-->>User: Updated notes
     deactivate Browser
 ```
