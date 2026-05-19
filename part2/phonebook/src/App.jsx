@@ -54,6 +54,12 @@ const App = () => {
     setNameFilter(event.target.value)
   }
 
+  const handleDelete = (id, name) => {
+    if (confirm(`Delete ${name}?`)) {
+      personService.deletePerson(id).then(() => setPersons(persons.filter(person => person.id !== id))).catch(error => console.log("Error deleting:", error))
+    }
+  }
+
   const namesToShow = nameFilter === '' 
     ? persons 
     : persons.filter(person => person.name.toLowerCase().split(' ').some(word => word.startsWith(nameFilter.toLowerCase())))
@@ -65,7 +71,7 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons namesToShow={namesToShow}/>
+      <Persons namesToShow={namesToShow} handleDelete={handleDelete}/>
     </div>
   )
 }
