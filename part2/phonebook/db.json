@@ -24,6 +24,11 @@
       "name": "asd",
       "number": "123",
       "id": "dOHMYcsdpFw"
+    },
+    {
+      "name": "asd2",
+      "number": "1234",
+      "id": "AKRp7WdPIhc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
