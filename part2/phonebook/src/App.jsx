@@ -4,6 +4,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import axios from 'axios'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -12,6 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState('Sample')
 
   useEffect(() => {
     personService.getAll().then(persons => setPersons(persons))
@@ -33,7 +35,13 @@ const App = () => {
     if (existingPerson) {
       if (confirm(`${newName} is already added to the phonebook, would you like to replace the old number with a new one?`)) {
         const updatedPerson = { ...existingPerson, number: newNumber }
-        personService.updateNumber(updatedPerson.id, updatedPerson).then(returnedPerson => setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person)))
+        personService.updateNumber(updatedPerson.id, updatedPerson).then(returnedPerson => {
+          setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+          setNotificationMessage(`Updated ${updatedPerson.name}'s number.`)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 5000)
+        })
       }
       return
     }
@@ -72,6 +80,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage}/>
       <Filter nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange}/>
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
