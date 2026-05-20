@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios
@@ -14,6 +15,10 @@ const App = () => {
   const handleSearch = (event) => {
     setSearch(event.target.value)
   }
+
+  const handleClick = (country) => {
+    setSelectedCountry(country)
+  }
   
   const countriesToShow = search === "" ? countries : countries.filter(country => 
     country.name.common.toLowerCase().includes(search.toLowerCase())
@@ -23,7 +28,22 @@ const App = () => {
 
   let contentToRender
 
-  if (numberOfMatches > 10) {
+  if (selectedCountry) {
+    contentToRender = (
+      <div>
+        <h1>{selectedCountry.name.common}</h1>
+        <button onClick={() => handleClick(null)}>Unselect</button>
+        <div>Capital {selectedCountry.capital[0]}</div>
+        <div>Area {selectedCountry.area}</div>
+        <h1>Languages</h1>
+        <ul>
+          {Object.values(selectedCountry.languages).map(language => <li key={language}>{language}</li>)}
+        </ul>
+        <img src={selectedCountry.flags.png}/>
+      </div>
+    )
+  }
+  else if (numberOfMatches > 10) {
     contentToRender = <div>Too many matches, specify another filter</div>
   }
   else if (numberOfMatches === 1) {
@@ -43,7 +63,7 @@ const App = () => {
     )
   }
   else {
-    contentToRender = countriesToShow.map(country => <div key={country.name.common}>{country.name.common}</div>)
+    contentToRender = countriesToShow.map(country => <div key={country.name.common}>{country.name.common} <button onClick={() => handleClick(country)}>Show</button></div>)
   }
 
   return (
