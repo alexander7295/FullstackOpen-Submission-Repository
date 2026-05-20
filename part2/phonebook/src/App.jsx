@@ -13,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [notificationMessage, setNotificationMessage] = useState('Sample')
+  const [notification, setNotification] = useState({ notificationStatus: "success", notificationMessage: "Sample" })
 
   useEffect(() => {
     personService.getAll().then(persons => setPersons(persons))
@@ -37,9 +37,15 @@ const App = () => {
         const updatedPerson = { ...existingPerson, number: newNumber }
         personService.updateNumber(updatedPerson.id, updatedPerson).then(returnedPerson => {
           setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
-          setNotificationMessage(`Updated ${updatedPerson.name}'s number.`)
+          setNotification({notificationStatus: "success", notificationMessage: `Updated ${updatedPerson.name}'s number.`})
           setTimeout(() => {
-            setNotificationMessage(null)
+            setNotification({ ...notification, notificationMessage: null})
+          }, 5000)
+        }).catch(error => {
+          setNotification({notificationStatus: "error", notificationMessage: `Information of ${updatedPerson.name} has already been removed from the server.`})
+          setPersons(persons.filter(person => person.id !== updatedPerson.id))
+          setTimeout(() => {
+            setNotification({ ...notification, notificationMessage: null})
           }, 5000)
         })
       }
@@ -60,6 +66,10 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setNotification({ notificationStatus: "success", notificationMessage: `Added ${returnedPerson.name}.`})
+      setTimeout(() => {
+        setNotification({ ...notification, notificationMessage: null})
+      }, 5000)
     })
   }
 
@@ -80,7 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage}/>
+      <Notification notification={notification}/>
       <Filter nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange}/>
       <h2>Add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
