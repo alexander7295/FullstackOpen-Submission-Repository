@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
+import CountryView from './components/CountryView'
 
 const App = () => {
   const [countries, setCountries] = useState([])
@@ -30,17 +31,18 @@ const App = () => {
 
   if (selectedCountry) {
     contentToRender = (
-      <div>
-        <h1>{selectedCountry.name.common}</h1>
-        <button onClick={() => handleClick(null)}>Unselect</button>
-        <div>Capital {selectedCountry.capital[0]}</div>
-        <div>Area {selectedCountry.area}</div>
-        <h1>Languages</h1>
-        <ul>
-          {Object.values(selectedCountry.languages).map(language => <li key={language}>{language}</li>)}
-        </ul>
-        <img src={selectedCountry.flags.png}/>
-      </div>
+      // <div>
+      //   <h1>{selectedCountry.name.common}</h1>
+      //   <button onClick={() => handleClick(null)}>Unselect</button>
+      //   <div>Capital {selectedCountry.capital[0]}</div>
+      //   <div>Area {selectedCountry.area}</div>
+      //   <h1>Languages</h1>
+      //   <ul>
+      //     {Object.values(selectedCountry.languages).map(language => <li key={language}>{language}</li>)}
+      //   </ul>
+      //   <img src={selectedCountry.flags.png}/>
+      // </div>
+      <CountryView country={selectedCountry} handleClick={handleClick}/>
     )
   }
   else if (numberOfMatches > 10) {
@@ -50,16 +52,17 @@ const App = () => {
     const country = countriesToShow[0]
     
     contentToRender = (
-      <div>
-        <h1>{country.name.common}</h1>
-        <div>Capital {country.capital[0]}</div>
-        <div>Area {country.area}</div>
-        <h1>Languages</h1>
-        <ul>
-          {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
-        </ul>
-        <img src={country.flags.png}/>
-      </div>
+      // <div>
+      //   <h1>{country.name.common}</h1>
+      //   <div>Capital {country.capital[0]}</div>
+      //   <div>Area {country.area}</div>
+      //   <h1>Languages</h1>
+      //   <ul>
+      //     {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
+      //   </ul>
+      //   <img src={country.flags.png}/>
+      // </div>
+      <CountryView country={country} />
     )
   }
   else {
