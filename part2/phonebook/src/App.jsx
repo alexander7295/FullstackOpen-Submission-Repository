@@ -42,8 +42,14 @@ const App = () => {
             setNotification({ ...notification, notificationMessage: null})
           }, 5000)
         }).catch(error => {
-          setNotification({notificationStatus: "error", notificationMessage: `Information of ${updatedPerson.name} has already been removed from the server.`})
-          setPersons(persons.filter(person => person.id !== updatedPerson.id))
+          if (error.response?.data?.error) {
+            setNotification({notificationStatus: "error", notificationMessage: error.response.data.error})
+          }
+          else {
+            setNotification({notificationStatus: "error", notificationMessage: `Information of ${updatedPerson.name} has already been removed from the server.`})
+            setPersons(persons.filter(person => person.id !== updatedPerson.id))
+          }
+          
           setTimeout(() => {
             setNotification({ ...notification, notificationMessage: null})
           }, 5000)
