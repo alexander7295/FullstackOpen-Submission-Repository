@@ -71,6 +71,12 @@ const App = () => {
         setNotification({ ...notification, notificationMessage: null})
       }, 5000)
     })
+    .catch(error => {
+      setNotification({ notificationStatus: "error", notificationMessage: error.response.data.error})
+      setTimeout(() => {
+        setNotification({ ...notification, notificationMessage: null})
+      }, 5000)
+    })
   }
 
   const handleNameFilterChange = (event) => {
