@@ -21,7 +21,7 @@ const list1 = {
 const list2 = {
   _id: '2a422aa71b54a676234d17f8',
   title: 'abc',
-  author: 'abc',
+  author: 'aaa',
   url: 'url1',
   likes: 20,
   __v: 0
@@ -70,5 +70,22 @@ describe('favorite blog', () => {
   test('of a bigger list with multiple blogs', () => {
     const result = listHelper.favoriteBlog(biggerList)
     assert.deepStrictEqual(result, list3)
+  })
+})
+
+describe('most blogs', () => {
+  test('of an empty list is null', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepStrictEqual(result, null)
+  })
+
+  test('of a list with one blog', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    assert.deepStrictEqual(result, {author:'Edsger W. Dijkstra', blogs:1})
+  })
+
+  test('of a list with multiple blogs', () => {
+    const result = listHelper.mostBlogs(biggerList)
+    assert.deepStrictEqual(result, {author:'aaa', blogs:2})
   })
 })
