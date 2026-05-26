@@ -94,7 +94,6 @@ test('requests missing the url property will return status 400', async () => {
 
 test('delete by id works correctly', async () => {
   const idToDelete = helper.list1._id
-  console.log(idToDelete)
 
   await api
     .delete(`/api/blogs/${idToDelete}`)
@@ -104,6 +103,21 @@ test('delete by id works correctly', async () => {
   const idsAfterDeletion = blogsAfterDeletion.map(blog => blog.id)
   
   assert(!idsAfterDeletion.includes(idToDelete))
+})
+
+test('update by id works correctly', async () => {
+  const blogToUpdate = helper.list1
+  blogToUpdate.likes = 1000
+
+  await api
+    .put(`/api/blogs/${blogToUpdate._id}`)
+    .send(blogToUpdate)
+    .expect(200)
+
+  const blogsAfterUpdate = await helper.blogsInDb()
+  const updatedBlog = blogsAfterUpdate.filter(blog => blog.id === blogToUpdate._id)[0]
+  
+  assert.strictEqual(updatedBlog.likes, blogToUpdate.likes)
 })
 
 after(async () => {
