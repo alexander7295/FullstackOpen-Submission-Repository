@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const { title } = require('node:process')
 
 const api = supertest(app)
 
@@ -42,11 +43,27 @@ test('posting to database works correctly', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-    const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, helper.biggerList.length + 1)
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.biggerList.length + 1)
 
-    const titles = blogsAtEnd.map(blog => blog.title)
-    assert(titles.includes('abc123'))
+  const titles = blogsAtEnd.map(blog => blog.title)
+  assert(titles.includes('abc123'))
+})
+
+test('requests missing the likes property will default to the value 0', async () => {
+  const newBlog = {
+    title: 'abcabc',
+    author: 'abc',
+    url: 'urlabc'
+  }
+
+  const result = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  assert.strictEqual(result.body.likes, 0)
 })
 
 after(async () => {
