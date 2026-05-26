@@ -6,6 +6,7 @@ blogsRouter.get('/', async (request, response) => {
   //   response.json(blogs)
   // })
   const allBlogs = await Blog.find({})
+  console.log(allBlogs.map(blog => blog.toJSON()))
   return response.json(allBlogs)
 })
 

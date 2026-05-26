@@ -22,6 +22,12 @@ test('the correct amount of blogs are returned in JSON', async () => {
   assert.strictEqual(response.body.length, helper.biggerList.length)
 })
 
+test('unique identifier of a blog is id', async () => {
+  const blogs = await helper.blogsInDb()
+  assert(blogs[0].id)
+  assert.strictEqual(blogs[0]._id, undefined)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
