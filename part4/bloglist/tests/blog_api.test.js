@@ -28,6 +28,27 @@ test('unique identifier of a blog is id', async () => {
   assert.strictEqual(blogs[0]._id, undefined)
 })
 
+test('posting to database works correctly', async () => {
+  const newBlog = {
+    title: 'abc123',
+    author: 'abc123',
+    url: 'abc123',
+    likes: 50,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.biggerList.length + 1)
+
+    const titles = blogsAtEnd.map(blog => blog.title)
+    assert(titles.includes('abc123'))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
