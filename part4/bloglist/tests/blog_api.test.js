@@ -92,6 +92,20 @@ test('requests missing the url property will return status 400', async () => {
     .expect(400)
 })
 
+test('delete by id works correctly', async () => {
+  const idToDelete = helper.list1._id
+  console.log(idToDelete)
+
+  await api
+    .delete(`/api/blogs/${idToDelete}`)
+    .expect(204)
+  
+  const blogsAfterDeletion = await helper.blogsInDb()
+  const idsAfterDeletion = blogsAfterDeletion.map(blog => blog.id)
+  
+  assert(!idsAfterDeletion.includes(idToDelete))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
