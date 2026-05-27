@@ -9,6 +9,14 @@ userRouter.get('/', async (request, response) => {
 
 userRouter.post('/', async (request, response) => {
   const { username, password, name } = request.body
+
+  if (!password) {
+    return response.status(400).json({error:'Password is missing'})
+  }
+  else if (password.length < 3) {
+    return response.status(400).json({error:'Password length is less than 3'})
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const user = new User({
