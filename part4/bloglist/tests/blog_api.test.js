@@ -6,12 +6,39 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 const { title } = require('node:process')
+const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const api = supertest(app)
 
+let token
+
 beforeEach(async () => {
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('1234', 10)
+  const testUser = new User({
+    username: 'testuser',
+    password: passwordHash,
+    name: 'testuser'
+  })
+  const savedUser = await testUser.save()
+
+  const result = await api
+    .post('/api/login')
+    .send({
+      username: 'testuser',
+      password: '1234'
+    })
+  
+  token = result.body.token
+
+  const testLists = helper.biggerList.map(blog => ({
+    ...blog,
+    user: savedUser._id
+  }))
+
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.biggerList)
+  await Blog.insertMany(testLists)
 })
 
 test('the correct amount of blogs are returned in JSON', async () => {
@@ -39,6 +66,7 @@ test('posting to database works correctly', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -59,6 +87,7 @@ test('requests missing the likes property will default to the value 0', async ()
 
   const result = await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -75,6 +104,7 @@ test('requests missing the title property will return status 400', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -88,6 +118,7 @@ test('requests missing the url property will return status 400', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(400)
 })
@@ -97,6 +128,7 @@ test('delete by id works correctly', async () => {
 
   await api
     .delete(`/api/blogs/${idToDelete}`)
+    .set('Authorization', `Bearer ${token}`)
     .expect(204)
   
   const blogsAfterDeletion = await helper.blogsInDb()
@@ -118,6 +150,22 @@ test('update by id works correctly', async () => {
   const updatedBlog = blogsAfterUpdate.filter(blog => blog.id === blogToUpdate._id)[0]
   
   assert.strictEqual(updatedBlog.likes, blogToUpdate.likes)
+})
+
+test('adding a blog fails with status 401 if token is not provided', async () => {
+  const newBlog = {
+    title: 'aaabbb',
+    author: 'aaabbb',
+    url: 'aaabbb',
+    likes: 10
+  }
+
+  const result = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+
+  assert.strictEqual(result.body.error, 'Invalid token')
 })
 
 after(async () => {
